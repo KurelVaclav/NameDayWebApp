@@ -1,7 +1,5 @@
 package fg.forrest.namedayapp.nameday.namedaysgenerator;
 
-import org.springframework.cglib.core.Local;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,7 +12,7 @@ import java.util.Scanner;
 
 public class NamedaysGenerator {
 
-    static File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\nds.txt");
+    static File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\newnds.txt");
     static final Locale LOCALE = new Locale("cs","CZ");
 
     public static void generateNamedaysToFile() {
@@ -22,7 +20,7 @@ public class NamedaysGenerator {
         Locale locale = LOCALE;
         List<String> names = modifyNamedaysFile();
         for (int i = 1; i <= 365; i++) {
-            LocalDate date = LocalDate.ofYearDay(2023, i);
+            LocalDate date = LocalDate.ofYearDay(2020, i);
             String nameday = names.get(i-1);
             stringBuilder.append(nameday).append(":").append(date).append(System.lineSeparator());
         }
@@ -37,7 +35,7 @@ public class NamedaysGenerator {
     public static List<String> modifyNamedaysFile() {
         List<String> names = new ArrayList<>();
         try {
-            File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\namesitnetwork.txt");
+            File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\newnamesitnetwork.txt");
             FileInputStream fileInputStream = new FileInputStream(file);
             Scanner scanner = new Scanner(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
             scanner.useLocale(LOCALE);
@@ -53,7 +51,6 @@ public class NamedaysGenerator {
         }
         return names;
     }
-
 
 //    public static void main(String[] args) {
 //        NamedaysGenerator namedaysGenerator = new NamedaysGenerator();

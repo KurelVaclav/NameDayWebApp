@@ -1,5 +1,7 @@
-package fg.forrest.namedayapp.nameday;
+package fg.forrest.namedayapp.nameday.controller;
 
+import fg.forrest.namedayapp.nameday.model.Nameday;
+import fg.forrest.namedayapp.nameday.service.NamedayService;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ public class NamedayController {
             if (!namedayService.validateNamedays(namedays)){
                 return ResponseEntity.badRequest().body("Duplicate name for the same data");
             }
-            if (namedayService.saveNamedays(namedays)){
+            if (namedayService.saveNamedays(namedays, file)){
                 return ResponseEntity.ok().body("Nameday file successfully updated");
             } else {
                 return ResponseEntity.badRequest().body("Failed to update nameday file");

@@ -1,4 +1,4 @@
-package fg.forrest.namedayapp.nameday;
+package fg.forrest.namedayapp.nameday.model;
 import java.time.LocalDate;
 
 public class Nameday {
