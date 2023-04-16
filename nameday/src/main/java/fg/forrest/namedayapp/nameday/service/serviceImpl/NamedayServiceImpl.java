@@ -3,7 +3,6 @@ package fg.forrest.namedayapp.nameday.service.serviceImpl;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -16,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -65,8 +65,8 @@ public class NamedayServiceImpl implements NamedayService {
         for (String line : lines) {
             String[] parts = line.split(":");
             if (parts.length == 2) {
-                String dateString = parts[0].trim();
-                String namedayString = parts[1].trim();
+                String namedayString = parts[0].trim();
+                String dateString = parts[1].trim();
                 LocalDate date = LocalDate.parse(dateString);
                 namedays.add(new Nameday(date,namedayString));
             }
@@ -93,9 +93,9 @@ public class NamedayServiceImpl implements NamedayService {
             for (Nameday nameday : namedays) {
                 stringBuilder.append(nameday.getNameday()).append(":").append(nameday.getDate()).append(System.lineSeparator());
             }
-            String folderpath = String.valueOf(ResourceUtils.getFile("src/main/resources/uploaded_"));
-            Path path = Paths.get(folderpath + file.getOriginalFilename()); //Path.of(file.getName())
-            Files.writeString(path, stringBuilder.toString());
+            Path folderpath = Path.of(ResourceUtils.getFile("src/main/resources/namedays.txt").toURI());
+//            Path path = Paths.get(folderpath + file.getOriginalFilename()); //Path.of(file.getName())
+            Files.write(folderpath, stringBuilder.toString().trim().getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         } catch (IOException e) {
             return false;

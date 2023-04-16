@@ -56,7 +56,6 @@ class NamedayControllerTest {
         when(namedayService.validateNamedays(namedays)).thenReturn(true);
         when(namedayService.saveNamedays(namedays, file)).thenReturn(true);
 
-        //TODO here end cause !=txt - handle error
         ResponseEntity<String> responseEntity = namedayController.updateNamedays(file);
 
         verify(namedayService, times(1)).parseNamedays(anyString());

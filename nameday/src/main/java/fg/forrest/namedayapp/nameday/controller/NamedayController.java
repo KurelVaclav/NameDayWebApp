@@ -18,33 +18,30 @@ import java.io.IOException;
 @RequestMapping(path = "/")
 public class NamedayController {
 
+    private final NamedayService namedayService;
+
     @Autowired
-    private NamedayService namedayService;
-//    private final NamedayService namedayService;
-//
-////    @Autowired
-////    public NamedayController(NamedayService namedayService) {
-////        this.namedayService = namedayService;
-////    }
+    public NamedayController(NamedayService namedayService) {
+        this.namedayService = namedayService;
+    }
 
     @GetMapping("/test")
     public List<Nameday> getNameday() throws IOException {
         return namedayService.getNameday();
     }
 
+    //TODO check for update and update GET
     @PostMapping("/update")
     public ResponseEntity<String> updateNamedays(@RequestParam("file") @NotNull MultipartFile file) throws IOException {
         if(file.isEmpty()){
             return ResponseEntity.badRequest().body("File is empty");
         }
         String filename = file.getOriginalFilename();
-        if(!filename.toString().endsWith(".txt")){
+        if(!filename.endsWith(".txt")){
             return ResponseEntity.badRequest().body("Unsupported file format, must be .txt");
         }
         try{
-
-            //TODO: parse file + validate contents + save to disk
-            String contents = new String(filename.getBytes(), StandardCharsets.UTF_8);
+            String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
             List<Nameday> namedays = namedayService.parseNamedays(contents);
             if (!namedayService.validateNamedays(namedays)){
                 return ResponseEntity.badRequest().body("Duplicate name for the same data");

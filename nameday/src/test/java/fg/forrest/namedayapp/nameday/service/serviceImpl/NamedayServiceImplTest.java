@@ -46,7 +46,7 @@ class NamedayServiceImplTest {
 
     @Test
     void parseNamedays_SimpleValues_Parsed() {
-        String contents = "2023-04-14: Vincenc\n2023-04-15: Anastázie\n";
+        String contents = "Vincenc:2023-04-14\nAnastázie:2023-04-15\n";
         List<Nameday> namedays = namedayService.parseNamedays(contents);
         assertEquals(namedays.size(), 2);
         Nameday firstNameday = namedays.get(0);
