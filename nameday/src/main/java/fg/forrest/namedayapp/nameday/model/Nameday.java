@@ -37,4 +37,8 @@ public class Nameday {
                 ", nameday='" + nameday + '\'' +
                 '}';
     }
+
+    public String toJSONString() {
+        return "[{"+"\"date\""+":"+'\"'+date+'\"'+","+"\"nameday\""+":"+'\"'+nameday+'\"'+"}]";
+    }
 }

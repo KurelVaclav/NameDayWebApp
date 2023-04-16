@@ -3,6 +3,7 @@ package fg.forrest.namedayapp.nameday.service.serviceImpl;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -14,12 +15,14 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
 public class NamedayServiceImpl implements NamedayService {
+
 
     public List<Nameday> getNameday() throws IOException{
         LocalDate today = LocalDate.now();
@@ -90,7 +93,9 @@ public class NamedayServiceImpl implements NamedayService {
             for (Nameday nameday : namedays) {
                 stringBuilder.append(nameday.getNameday()).append(":").append(nameday.getDate()).append(System.lineSeparator());
             }
-            Files.writeString(Path.of(file.getName()), stringBuilder.toString());
+            String folderpath = String.valueOf(ResourceUtils.getFile("src/main/resources/uploaded_"));
+            Path path = Paths.get(folderpath + file.getOriginalFilename()); //Path.of(file.getName())
+            Files.writeString(path, stringBuilder.toString());
             return true;
         } catch (IOException e) {
             return false;

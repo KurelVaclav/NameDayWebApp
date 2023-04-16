@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.io.IOException;
@@ -16,30 +18,31 @@ import java.io.IOException;
 @RequestMapping(path = "/")
 public class NamedayController {
 
-    private final NamedayService namedayService;
-
     @Autowired
-    public NamedayController(NamedayService namedayService) {
-        this.namedayService = namedayService;
-    }
+    private NamedayService namedayService;
+//    private final NamedayService namedayService;
+//
+////    @Autowired
+////    public NamedayController(NamedayService namedayService) {
+////        this.namedayService = namedayService;
+////    }
 
     @GetMapping("/test")
     public List<Nameday> getNameday() throws IOException {
         return namedayService.getNameday();
     }
 
-//    @Value("${nameday.file.path}")
-//    private String namedayFilePath;
     @PostMapping("/update")
     public ResponseEntity<String> updateNamedays(@RequestParam("file") @NotNull MultipartFile file) throws IOException {
         if(file.isEmpty()){
             return ResponseEntity.badRequest().body("File is empty");
         }
-        if(!file.toString().endsWith(".txt")){
+        String filename = file.getOriginalFilename();
+        if(!filename.toString().endsWith(".txt")){
             return ResponseEntity.badRequest().body("Unsupported file format, must be .txt");
         }
         try{
-            String filename = file.getOriginalFilename();
+
             //TODO: parse file + validate contents + save to disk
             String contents = new String(filename.getBytes(), StandardCharsets.UTF_8);
             List<Nameday> namedays = namedayService.parseNamedays(contents);
