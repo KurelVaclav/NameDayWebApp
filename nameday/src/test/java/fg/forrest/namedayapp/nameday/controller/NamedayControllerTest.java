@@ -34,20 +34,27 @@ class NamedayControllerTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    /**
+     * Testing getNameday method for communication between namedayService and namedayController
+     * Expected right communication between controller and service
+     */
     @Test
-    public void getNameday_ActualDay_Today() throws IOException {
+    public void getNameday_ActualDayToday_RightCommunication() throws IOException {
         List<Nameday> expectedNamedays = new ArrayList<>();
-        expectedNamedays.add(new Nameday(LocalDate.now(),"Irena"));
+        expectedNamedays.add(new Nameday(LocalDate.now(),"Rudolf"));
         when(namedayService.getNameday()).thenReturn(expectedNamedays);
         List<Nameday> actualNamedays = namedayController.getNameday();
         verify(namedayService, times(1)).getNameday();
         assertEquals(expectedNamedays, actualNamedays);
     }
 
+    /**
+     * Testing updateNamedys to correct file with correct data, expected OK status and update new file
+     */
     @Test
-    public void updateNamedays__() throws IOException, FileParsingException {
+    public void updateNamedays_CorrectFile_OK() {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain",
-                "Mary:2023-04-15\nGeorge:2023-04-16\nJan:2023-04-17".getBytes(StandardCharsets.UTF_8));
+                "Mary:2023-04-16\nGeorge:2023-04-17\nJohn:2023-04-18".getBytes(StandardCharsets.UTF_8));
 
         List<Nameday> namedays = new ArrayList<>();
         namedays.add(new Nameday(LocalDate.now(),"George"));

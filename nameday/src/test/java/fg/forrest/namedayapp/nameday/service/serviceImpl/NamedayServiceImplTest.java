@@ -1,5 +1,6 @@
 package fg.forrest.namedayapp.nameday.service.serviceImpl;
 
+import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,22 +21,19 @@ class NamedayServiceImplTest {
     NamedayServiceImpl namedayService = new NamedayServiceImpl();
 
     /**
-     * Testing default txt DBfile with namedays+dates
+     * Testing getNameday method for default txt DBfile with namedays+dates
+     * You have to fill expected data according to file data and today's date
      * in format:
      * <nameday>:yyyy-mm-dd\n
-     *
-     * @throws IOException
      */
     @Test
     void getNameday_parsingDBFile_TodayDateAndNameday() throws IOException {
         List<Nameday> nameday = namedayService.getNameday();
-        assertEquals("[{\"date\":\"2023-04-16\",\"nameday\":\"Irena\"}]", nameday.get(0).toJSONString());
+        assertEquals("[{\"date\":\"2023-04-17\",\"nameday\":\"Rudolf\"}]", nameday.get(0).toJSONString());
     }
 
     /**
-     * Testing loading namedays from default txt DB file
-     *
-     * @throws IOException
+     * Testing loadNamedaysFromFile method for loading namedays from default txt DB file
      */
     @Test
     void loadNamedaysFromFile_SimpleValues_Parsed() throws IOException {
@@ -44,6 +42,9 @@ class NamedayServiceImplTest {
         assertEquals("Vincenc", namedays.get(0).getNameday());
     }
 
+    /**
+     * Testing parseNamedays method for parsing right simple value
+     */
     @Test
     void parseNamedays_SimpleValues_Parsed() {
         String contents = "Vincenc:2023-04-14\nAnastázie:2023-04-15\n";
@@ -54,6 +55,9 @@ class NamedayServiceImplTest {
         assertEquals(firstNameday.getNameday(), "Vincenc");
     }
 
+    /**
+     * Testing validateNamedays method for unique dates - unnique => true
+     */
     @Test
     void validateNamedays_WithUniqueDates_True() {
         //nameday list with unique dates
@@ -64,6 +68,9 @@ class NamedayServiceImplTest {
         assertTrue(namedayService.validateNamedays(namedays));
     }
 
+    /**
+     * Testing validateNamedays method for unique dates - duplicate => false
+     */
     @Test
     public void validateNamedays_WithDuplicateDates_False() {
         //nameday list with duplicate dates
@@ -74,6 +81,10 @@ class NamedayServiceImplTest {
         assertFalse(namedayService.validateNamedays(namedays));
     }
 
+    /**
+     * Testing saveNamedays method for correct .txt file, expected true
+     * More testing is in NamedayControllerUpdateTest
+     */
     @Test
     void saveNamedays_CorrectFile_True() throws IOException {
         List<Nameday> namedays = new ArrayList<>();
@@ -88,4 +99,6 @@ class NamedayServiceImplTest {
         assertEquals("Nový_rok:2022-01-01\r\n" + "Valentýn:2022-02-14\r\n" + "Vlastimil:2022-03-17", contents.trim());
         assertTrue(result);
     }
+
+
 }

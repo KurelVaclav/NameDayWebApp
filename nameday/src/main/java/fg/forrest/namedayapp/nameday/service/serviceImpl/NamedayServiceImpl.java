@@ -3,6 +3,8 @@ package fg.forrest.namedayapp.nameday.service.serviceImpl;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.support.NullValue;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -14,7 +16,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -24,22 +25,25 @@ import java.util.*;
 public class NamedayServiceImpl implements NamedayService {
 
 
-    public List<Nameday> getNameday() throws IOException{
+    public List<Nameday> getNameday() throws IOException {
         LocalDate today = LocalDate.now();
         List<Nameday> todayNamedays;
-        todayNamedays = loadNamedaysFromFile(today);
+        try {
+            todayNamedays = loadNamedaysFromFile(today);
+        }catch (FileParsingException e){
+            throw new FileParsingException("Today's nameday is null");
+        }
         return todayNamedays;
     }
 
     @Scheduled(fixedDelay = 10000)
-    public List<Nameday> loadNamedaysFromFile(LocalDate date) throws IOException{
+    public List<Nameday> loadNamedaysFromFile(LocalDate date) throws IOException {
         List<Nameday> namedays = new ArrayList<>();
         String namedayFileContent;
         String[] namedayLines;
         File file = ResourceUtils.getFile("src/main/resources/namedays.txt"); //classpath:namedays.txt
         InputStream inputStream = Files.newInputStream(Path.of(file.getPath()));
-//        InputStream inputStream = Files.newInputStream(Path.of("C:\\SpringsProject\\NameDayWebApp\\nameday\\src\\main\\resources\\namedays.txt"));
-        try{
+        try {
             namedayFileContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             namedayLines = namedayFileContent.split("\\r?\\n");
             for (String namedayLine : namedayLines) {
@@ -52,8 +56,11 @@ public class NamedayServiceImpl implements NamedayService {
                     }
                 }
             }
+            if(namedays.isEmpty()){
+                throw new FileParsingException("Namedays are empty");
+            }
         } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
-            throw new FileParsingException("Error in parsing file - "+e.getMessage(), e);
+            throw new FileParsingException("Error in parsing file - " + e.getMessage(), e);
         }
         return namedays;
     }
@@ -61,15 +68,22 @@ public class NamedayServiceImpl implements NamedayService {
     @Override
     public List<Nameday> parseNamedays(String contents) {
         List<Nameday> namedays = new ArrayList<>();
-        String[] lines = contents.split("\\r?\\n");
-        for (String line : lines) {
-            String[] parts = line.split(":");
-            if (parts.length == 2) {
-                String namedayString = parts[0].trim();
-                String dateString = parts[1].trim();
-                LocalDate date = LocalDate.parse(dateString);
-                namedays.add(new Nameday(date,namedayString));
+        try {
+            String[] lines = contents.split("\\r?\\n");
+            for (String line : lines) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String namedayString = parts[0].trim();
+                    String dateString = parts[1].trim();
+                    LocalDate date = LocalDate.parse(dateString);
+                    namedays.add(new Nameday(date, namedayString));
+                }
             }
+            if (namedays.isEmpty()){
+                throw new FileParsingException("Namedays are empty");
+            }
+        }catch (DateTimeParseException e){
+            throw new FileParsingException("Error in parsing file " + e.getMessage(),e);
         }
         return namedays;
     }

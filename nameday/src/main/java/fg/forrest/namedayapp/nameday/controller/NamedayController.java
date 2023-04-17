@@ -27,35 +27,41 @@ public class NamedayController {
 
     @GetMapping("/test")
     public List<Nameday> getNameday() throws IOException {
-        return namedayService.getNameday();
+            return namedayService.getNameday();
     }
 
     //TODO check for update and update GET
     @PostMapping("/update")
-    public ResponseEntity<String> updateNamedays(@RequestParam("file") @NotNull MultipartFile file) throws IOException {
-        if(file.isEmpty()){
-            return ResponseEntity.badRequest().body("File is empty");
-        }
+    public ResponseEntity<String> updateNamedays(@RequestParam("file") @NotNull MultipartFile file) {
         String filename = file.getOriginalFilename();
-        if(!filename.endsWith(".txt")){
+        if (!filename.endsWith(".txt")) {
             return ResponseEntity.badRequest().body("Unsupported file format, must be .txt");
         }
-        try{
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+        try {
             String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
+
             List<Nameday> namedays = namedayService.parseNamedays(contents);
-            if (!namedayService.validateNamedays(namedays)){
-                return ResponseEntity.badRequest().body("Duplicate name for the same data");
+            if (!namedayService.validateNamedays(namedays)) {
+                return ResponseEntity.badRequest().body("Duplicate dates for the same data");
             }
-            if (namedayService.saveNamedays(namedays, file)){
+            if (namedayService.saveNamedays(namedays, file)) {
                 return ResponseEntity.ok().body("Nameday file successfully updated");
             } else {
                 return ResponseEntity.badRequest().body("Failed to update nameday file");
             }
-        } catch (FileParsingException e){
+        } catch (FileParsingException e) {
             return ResponseEntity.badRequest().body("Invalid nameday file format: " + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to update nameday file" + e.getMessage());
         }
+    }
+
+    @ExceptionHandler(FileParsingException.class)
+    public ResponseEntity<String> handleFileParsingException(FileParsingException fileParsingException) {
+        return ResponseEntity.badRequest().body("Error in parsing file - " + fileParsingException.getMessage());
     }
 
 }
