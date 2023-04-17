@@ -2,8 +2,10 @@ package fg.forrest.namedayapp.nameday.service.serviceImpl;
 
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
+import fg.forrest.namedayapp.nameday.service.NamedayRepo;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.support.NullValue;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.*;
 @Service
 public class NamedayServiceImpl implements NamedayService {
 
+    @Autowired
+    private NamedayRepo namedayRepo; //TODO comunicate with MySQL
 
     public List<Nameday> getNameday() throws IOException {
         LocalDate today = LocalDate.now();
