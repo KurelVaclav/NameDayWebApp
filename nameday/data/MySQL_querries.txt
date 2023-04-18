@@ -1,0 +1,14 @@
+show databases;
+
+
+use nameday
+
+
+SELECT * FROM namedays;
+
+
+INSTER INTO namedays (nameday, date) VALUES ("Valérie","2023-04-18");
+
+
+UPDATE namedays SET nameday = 'TestDB' WHERE date = '2023-04-18';
+

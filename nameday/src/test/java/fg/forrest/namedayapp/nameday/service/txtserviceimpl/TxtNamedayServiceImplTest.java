@@ -1,6 +1,5 @@
-package fg.forrest.namedayapp.nameday.service.serviceImpl;
+package fg.forrest.namedayapp.nameday.service.txtserviceimpl;
 
-import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class NamedayServiceImplTest {
+class TxtNamedayServiceImplTest {
 
-    NamedayServiceImpl namedayService = new NamedayServiceImpl();
+    TxtNamedayServiceImpl namedayService = new TxtNamedayServiceImpl();
 
     /**
      * Testing getNameday method for default txt DBfile with namedays+dates

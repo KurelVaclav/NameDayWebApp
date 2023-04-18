@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -71,6 +72,23 @@ class NamedayControllerTest {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("Nameday file successfully updated", responseEntity.getBody());
+    }
+
+
+    @Test
+    public void testGetNamedayDB() throws IOException {
+        MockitoAnnotations.openMocks(this);
+
+        LocalDate date = LocalDate.now();
+        List<Nameday> namedayList = new ArrayList<>();
+        namedayList.add(new Nameday(date, "Jan"));
+        namedayList.add(new Nameday(date, "Petr"));
+        namedayList.add(new Nameday(date, "Tomas"));
+
+        when(namedayService.getNameday()).thenReturn(namedayList);
+
+        List<Nameday> result = namedayController.getNamedayDB();
+        assertEquals(namedayList, result);
     }
 }
 

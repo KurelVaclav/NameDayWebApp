@@ -5,12 +5,14 @@ import fg.forrest.namedayapp.nameday.service.NamedayService;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.io.IOException;
 
@@ -18,16 +20,21 @@ import java.io.IOException;
 @RequestMapping(path = "/")
 public class NamedayController {
 
-    private final NamedayService namedayService;
+    private final NamedayService txtNamedayService;
+    private final NamedayService mysqlNamedayService;
 
     @Autowired
-    public NamedayController(NamedayService namedayService) {
-        this.namedayService = namedayService;
+    public NamedayController(@Qualifier("txtNamedayService") NamedayService txtNamedayService,
+                             @Qualifier("mysqlNamedayService") NamedayService mysqlNamedayService) {
+        this.txtNamedayService = txtNamedayService;
+        this.mysqlNamedayService = mysqlNamedayService;
     }
 
+
+    // GET and POST for DB from txt file
     @GetMapping("/test")
     public List<Nameday> getNameday() throws IOException {
-            return namedayService.getNameday();
+            return txtNamedayService.getNameday();
     }
 
     //TODO check for update and update GET
@@ -42,12 +49,11 @@ public class NamedayController {
         }
         try {
             String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
-
-            List<Nameday> namedays = namedayService.parseNamedays(contents);
-            if (!namedayService.validateNamedays(namedays)) {
+            List<Nameday> namedays = txtNamedayService.parseNamedays(contents);
+            if (!txtNamedayService.validateNamedays(namedays)) {
                 return ResponseEntity.badRequest().body("Duplicate dates for the same data");
             }
-            if (namedayService.saveNamedays(namedays, file)) {
+            if (txtNamedayService.saveNamedays(namedays, file)) {
                 return ResponseEntity.ok().body("Nameday file successfully updated");
             } else {
                 return ResponseEntity.badRequest().body("Failed to update nameday file");
@@ -63,5 +69,18 @@ public class NamedayController {
     public ResponseEntity<String> handleFileParsingException(FileParsingException fileParsingException) {
         return ResponseEntity.badRequest().body("Error in parsing file - " + fileParsingException.getMessage());
     }
+
+    // GET and POST for DB from MySQL
+    @GetMapping("/testDB")
+    public List<Nameday> getNamedayDB() throws IOException {
+        return mysqlNamedayService.getNameday();
+    }
+
+    @PostMapping("/updateDB")
+    public ResponseEntity<String> updateNamedaysDB(@RequestBody List<Nameday> namedays){
+        mysqlNamedayService.saveNamedays(namedays, null);
+        return ResponseEntity.ok().body("Succesfully uploaded to MySQL database");
+    }
+
 
 }
