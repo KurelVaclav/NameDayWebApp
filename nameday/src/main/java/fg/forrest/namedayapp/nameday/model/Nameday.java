@@ -2,7 +2,6 @@ package fg.forrest.namedayapp.nameday.model;
 
 import java.time.LocalDate;
 
-import fg.forrest.namedayapp.nameday.dateconverter.LocalDateConverter;
 import jakarta.persistence.*;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 

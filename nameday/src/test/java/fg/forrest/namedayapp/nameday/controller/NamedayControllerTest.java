@@ -1,6 +1,5 @@
 package fg.forrest.namedayapp.nameday.controller;
 
-import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -36,16 +34,16 @@ class NamedayControllerTest {
     }
 
     /**
-     * Testing getNameday method for communication between namedayService and namedayController
+     * Testing getTodayNameday method for communication between namedayService and namedayController
      * Expected right communication between controller and service
      */
     @Test
-    public void getNameday_ActualDayToday_RightCommunication() throws IOException {
+    public void getTodayNameday_ActualDayToday_RightCommunication() throws IOException {
         List<Nameday> expectedNamedays = new ArrayList<>();
         expectedNamedays.add(new Nameday(LocalDate.now(),"Rudolf"));
-        when(namedayService.getNameday()).thenReturn(expectedNamedays);
-        List<Nameday> actualNamedays = namedayController.getNameday();
-        verify(namedayService, times(1)).getNameday();
+        when(namedayService.getTodayNameday()).thenReturn(expectedNamedays);
+        List<Nameday> actualNamedays = namedayController.getTodayNameday();
+        verify(namedayService, times(1)).getTodayNameday();
         assertEquals(expectedNamedays, actualNamedays);
     }
 
@@ -75,20 +73,5 @@ class NamedayControllerTest {
     }
 
 
-    @Test
-    public void testGetNamedayDB() throws IOException {
-        MockitoAnnotations.openMocks(this);
-
-        LocalDate date = LocalDate.now();
-        List<Nameday> namedayList = new ArrayList<>();
-        namedayList.add(new Nameday(date, "Jan"));
-        namedayList.add(new Nameday(date, "Petr"));
-        namedayList.add(new Nameday(date, "Tomas"));
-
-        when(namedayService.getNameday()).thenReturn(namedayList);
-
-        List<Nameday> result = namedayController.getNamedayDB();
-        assertEquals(namedayList, result);
-    }
 }
 

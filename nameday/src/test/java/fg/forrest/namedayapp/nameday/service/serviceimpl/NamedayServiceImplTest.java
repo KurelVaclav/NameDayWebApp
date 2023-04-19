@@ -1,7 +1,12 @@
-package fg.forrest.namedayapp.nameday.service.txtserviceimpl;
+package fg.forrest.namedayapp.nameday.service.serviceimpl;
 
 import fg.forrest.namedayapp.nameday.model.Nameday;
+import fg.forrest.namedayapp.nameday.repository.NamedayRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,20 +20,42 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class TxtNamedayServiceImplTest {
+class NamedayServiceImplTest {
 
-    TxtNamedayServiceImpl namedayService = new TxtNamedayServiceImpl();
+
+    NamedayServiceImpl namedayServiceImpl = new NamedayServiceImpl();
+    @Mock
+    private NamedayRepository namedayRepository;
+
+    @InjectMocks
+    private NamedayServiceImpl namedayService;
 
     /**
-     * Testing getNameday method for default txt DBfile with namedays+dates
+     * OLD
+     * Testing getTodayNameday method for default txt DBfile with namedays+dates
      * You have to fill expected data according to file data and today's date
-     * in format:
-     * <nameday>:yyyy-mm-dd\n
+     * in format: <nameday>:yyyy-mm-dd\n
+     */
+//    @Test
+//    void getTodayNameday_parsingDBFile_TodayDateAndNameday() throws IOException {
+//        List<Nameday> nameday = namedayService.getTodayNameday();
+//        assertEquals("[{\"date\":\"2023-04-19\",\"nameday\":\"Rostislav\"}]", nameday.get(0).toJSONString());
+//    }
+
+    /**
+     * Testing  getTodayNameday method for MySQL DBfile with namedays+dates using Mockito
+     * You have to fill expected data according to file data and today's date
+     * in format: <nameday>:yyyy-mm-dd\n
      */
     @Test
-    void getNameday_parsingDBFile_TodayDateAndNameday() throws IOException {
-        List<Nameday> nameday = namedayService.getNameday();
-        assertEquals("[{\"date\":\"2023-04-17\",\"nameday\":\"Rudolf\"}]", nameday.get(0).toJSONString());
+    public void getTodayNameday_findByDateToday_verify() throws IOException{
+        LocalDate today = LocalDate.now();
+        List<Nameday> expectedNamedays = new ArrayList<>();
+        expectedNamedays.add(new Nameday(today,"Rostislav"));
+        Mockito.when(namedayRepository.findByDate(today)).thenReturn(expectedNamedays);
+        List<Nameday> actualNamedays = namedayService.getTodayNameday();
+        Mockito.verify(namedayRepository).findByDate(today);
+        Assert.assertEquals(expectedNamedays,actualNamedays);
     }
 
     /**
@@ -36,9 +63,9 @@ class TxtNamedayServiceImplTest {
      */
     @Test
     void loadNamedaysFromFile_SimpleValues_Parsed() throws IOException {
-        List<Nameday> namedays = namedayService.loadNamedaysFromFile(LocalDate.of(2023, 4, 14));
+        List<Nameday> namedays = namedayServiceImpl.loadNamedaysFromFile(LocalDate.of(2023, 2, 14));
         assertEquals(1, namedays.size());
-        assertEquals("Vincenc", namedays.get(0).getNameday());
+        assertEquals("Valentýn", namedays.get(0).getNameday());
     }
 
     /**
@@ -47,7 +74,7 @@ class TxtNamedayServiceImplTest {
     @Test
     void parseNamedays_SimpleValues_Parsed() {
         String contents = "Vincenc:2023-04-14\nAnastázie:2023-04-15\n";
-        List<Nameday> namedays = namedayService.parseNamedays(contents);
+        List<Nameday> namedays = namedayServiceImpl.parseNamedays(contents);
         assertEquals(namedays.size(), 2);
         Nameday firstNameday = namedays.get(0);
         assertEquals(firstNameday.getDate(), LocalDate.of(2023, 4, 14));
@@ -64,7 +91,7 @@ class TxtNamedayServiceImplTest {
         namedays.add(new Nameday(LocalDate.of(2023, 4, 14), "Vincenc"));
         namedays.add(new Nameday(LocalDate.of(2023, 4, 15), "Anastázie"));
         namedays.add(new Nameday(LocalDate.of(2023, 4, 16), "Irena"));
-        assertTrue(namedayService.validateNamedays(namedays));
+        assertTrue(namedayServiceImpl.validateNamedays(namedays));
     }
 
     /**
@@ -77,7 +104,7 @@ class TxtNamedayServiceImplTest {
         namedays.add(new Nameday(LocalDate.of(2023, 4, 14), "Vincenc"));
         namedays.add(new Nameday(LocalDate.of(2023, 4, 14), "Vincenc"));
         namedays.add(new Nameday(LocalDate.of(2023, 4, 16), "Irena"));
-        assertFalse(namedayService.validateNamedays(namedays));
+        assertFalse(namedayServiceImpl.validateNamedays(namedays));
     }
 
     /**
@@ -87,13 +114,13 @@ class TxtNamedayServiceImplTest {
     @Test
     void saveNamedays_CorrectFile_True() throws IOException {
         List<Nameday> namedays = new ArrayList<>();
-        namedays.add(new Nameday(LocalDate.of(2022, 1, 1), "Nový_rok"));
-        namedays.add(new Nameday(LocalDate.of(2022, 2, 14), "Valentýn"));
-        namedays.add(new Nameday(LocalDate.of(2022, 3, 17), "Vlastimil"));
+        namedays.add(new Nameday(LocalDate.of(2023, 1, 1), "Nový_rok"));
+        namedays.add(new Nameday(LocalDate.of(2023, 2, 14), "Valentýn"));
+        namedays.add(new Nameday(LocalDate.of(2023, 3, 17), "Vlastimil"));
         //mock MultipartFile object with a name
         MultipartFile file = mock(MultipartFile.class);
         when(file.getName()).thenReturn("namedays.txt");
-        boolean result = namedayService.saveNamedays(namedays, file);
+        boolean result = namedayServiceImpl.saveNamedays(namedays, file);
         String contents = Files.readString(Path.of(file.getName()));
         assertEquals("Nový_rok:2022-01-01\r\n" + "Valentýn:2022-02-14\r\n" + "Vlastimil:2022-03-17", contents.trim());
         assertTrue(result);
