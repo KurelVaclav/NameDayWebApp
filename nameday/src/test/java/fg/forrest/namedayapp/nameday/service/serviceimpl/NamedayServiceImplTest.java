@@ -2,11 +2,14 @@ package fg.forrest.namedayapp.nameday.service.serviceimpl;
 
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.repository.NamedayRepository;
+import fg.forrest.namedayapp.nameday.service.NamedayService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -14,21 +17,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.BDDAssumptions.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 class NamedayServiceImplTest {
 
 
-    NamedayServiceImpl namedayServiceImpl = new NamedayServiceImpl();
-    @Mock
-    private NamedayRepository namedayRepository;
+    private NamedayServiceImpl namedayServiceImpl = new NamedayServiceImpl();
 
+    @Mock
+    NamedayRepository namedayRepository;
     @InjectMocks
-    private NamedayServiceImpl namedayService;
+    NamedayServiceImpl namedayService;
 
     /**
      * OLD
@@ -44,19 +50,19 @@ class NamedayServiceImplTest {
 
     /**
      * Testing  getTodayNameday method for MySQL DBfile with namedays+dates using Mockito
-     * You have to fill expected data according to file data and today's date
-     * in format: <nameday>:yyyy-mm-dd\n
+     * You have to fill expected data (expectedNamedays) according to file data and today's date
      */
     @Test
-    public void getTodayNameday_findByDateToday_verify() throws IOException{
+    public void gtestGetTodayNameday_MockitoRepo_Equals() throws Exception {
         LocalDate today = LocalDate.now();
         List<Nameday> expectedNamedays = new ArrayList<>();
-        expectedNamedays.add(new Nameday(today,"Rostislav"));
+        expectedNamedays.add(new Nameday(today, "Marcela"));
         Mockito.when(namedayRepository.findByDate(today)).thenReturn(expectedNamedays);
         List<Nameday> actualNamedays = namedayService.getTodayNameday();
+        assertEquals(actualNamedays, expectedNamedays);
         Mockito.verify(namedayRepository).findByDate(today);
-        Assert.assertEquals(expectedNamedays,actualNamedays);
     }
+
 
     /**
      * Testing loadNamedaysFromFile method for loading namedays from default txt DB file
