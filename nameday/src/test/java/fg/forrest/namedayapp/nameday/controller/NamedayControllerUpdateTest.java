@@ -58,9 +58,7 @@ public class NamedayControllerUpdateTest {
      */
     @Test
     public void testUpdateNamedays_TxtFileWithWrongFormat_BadRequest() throws Exception {
-        String content = "asfas\n" +
-                "asfas\n" +
-                "fgg";
+        String content = "asfas\n" + "asfas\n" + "fgg";
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", content.getBytes());
         mockMvc.perform(MockMvcRequestBuilders.multipart("/update").file(file))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())

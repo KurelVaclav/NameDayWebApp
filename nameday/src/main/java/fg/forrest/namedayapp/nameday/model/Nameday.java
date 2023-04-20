@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
+/**
+ * Class Nameday represents nameday (holiday of name in the Czech Republic)
+ */
 @Entity
 public class Nameday{
 

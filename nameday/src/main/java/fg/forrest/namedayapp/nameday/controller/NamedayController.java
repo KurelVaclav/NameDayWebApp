@@ -4,6 +4,7 @@ import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.service.NamedayService;
 import fg.forrest.namedayapp.nameday.exception.FileParsingException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,32 +13,40 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.io.IOException;
 
+/**
+ * Class NamedayController handle /test and /update requests
+ */
 @RestController
 @RequestMapping(path = "/")
 public class NamedayController {
 
+    /**
+     * Injection of service to controller
+     */
     private final NamedayService txtNamedayService;
 
     public NamedayController(NamedayService txtNamedayService){
         this.txtNamedayService = txtNamedayService;
     }
 
-    //    private final NamedayService mysqlNamedayService;
-//
-//    public NamedayController(@Qualifier("txtNamedayService") NamedayService txtNamedayService,
-//                             @Qualifier("mysqlNamedayService") NamedayService mysqlNamedayService) {
-//        this.txtNamedayService = txtNamedayService;
-//        this.mysqlNamedayService = mysqlNamedayService;
-//    }
 
-
-    // GET and POST for DB from txt file
+    /**
+     * Method to get on /test today's nameday and date
+     * @return list of namedays
+     * @throws IOException
+     */
     @GetMapping("/test")
     public List<Nameday> getTodayNameday() throws IOException {
         return txtNamedayService.getTodayNameday();
     }
 
-    //TODO check for update and update GET
+    /**
+     * Method to parse, verify and post new file with namedays
+     * to local DB file "src/main/resources/namedays.txt"
+     * and to MySQL database "nameday"
+     * @param file - txt file with namedays in format <nameday>:yyyy-mm-dd\n
+     * @return ResponseEntity - ok or bad request
+     */
     @PostMapping("/update")
     public ResponseEntity<String> updateNamedays(@RequestParam("file") @NotNull MultipartFile file) {
         String filename = file.getOriginalFilename();
@@ -71,17 +80,5 @@ public class NamedayController {
     public ResponseEntity<String> handleFileParsingException(FileParsingException fileParsingException) {
         return ResponseEntity.badRequest().body("Error in parsing file - " + fileParsingException.getMessage());
     }
-
-//    // GET and POST for DB from MySQL
-//    @GetMapping("/testDB")
-//    public List<Nameday> getNamedayDB() throws IOException {
-//        return mysqlNamedayService.getTodayNameday();
-//    }
-//
-//    @PostMapping("/updateDB")
-//    public ResponseEntity<String> updateNamedaysDB(@RequestBody List<Nameday> namedays) {
-//        mysqlNamedayService.saveNamedays(namedays, null);
-//        return ResponseEntity.ok().body("Succesfully uploaded to MySQL database");
-//    }
 
 }

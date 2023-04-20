@@ -6,6 +6,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.io.IOException;
 
+/**
+ * Interface of NamedayService to handle business logic
+ */
 public interface NamedayService {
 
     public List<Nameday> getTodayNameday() throws IOException;

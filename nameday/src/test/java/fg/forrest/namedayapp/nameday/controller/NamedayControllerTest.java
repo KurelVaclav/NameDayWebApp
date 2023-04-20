@@ -20,6 +20,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Testing NamedayController for getTodayNameday and updateNamedays
+ */
 class NamedayControllerTest {
 
     @Mock
@@ -69,7 +72,7 @@ class NamedayControllerTest {
         verify(namedayService, times(1)).saveNamedays(namedays, file);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("Nameday file successfully updated", responseEntity.getBody());
+        assertEquals("Nameday file and database successfully updated", responseEntity.getBody());
     }
 
 

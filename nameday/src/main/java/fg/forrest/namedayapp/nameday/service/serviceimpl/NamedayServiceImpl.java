@@ -21,11 +21,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+/**
+ * Class NamedayServiceImpl implements NamedayService to handle business logic
+ */
 @Service
-//@Qualifier("txtNamedayService")
 public class NamedayServiceImpl implements NamedayService {
-
-    private List<Nameday> namedays;
 
     private final String FILE_PATH = "src/main/resources/namedays.txt";
 
@@ -48,7 +48,7 @@ public class NamedayServiceImpl implements NamedayService {
 //        } catch (NullPointerException  e) {
 //            throw new FileParsingException("Today's nameday is null" + e.getMessage());
 //        }
-        // now finding in MySQL db
+        // NOW finding in MySQL db
         todayNamedays = namedayRepository.findByDate(today);
         if (todayNamedays.isEmpty()){
             throw new FileParsingException("Today's nameday is null");

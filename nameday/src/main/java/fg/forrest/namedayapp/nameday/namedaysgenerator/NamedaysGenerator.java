@@ -21,7 +21,7 @@ import java.util.Scanner;
  */
 public class NamedaysGenerator {
 
-    static File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\newnds.txt");
+    static File file = new File("src\\test\\resources\\testing_txt_files\\newnds.txt");
     static final Locale LOCALE = new Locale("cs","CZ");
 
     /**
@@ -47,7 +47,7 @@ public class NamedaysGenerator {
     public static List<String> modifyNamedaysFile() {
         List<String> names = new ArrayList<>();
         try {
-            File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\newnamesitnetwork.txt");
+            File file = new File("src\\test\\resources\\testing_txt_files\\newnamesitnetwork.txt");
             FileInputStream fileInputStream = new FileInputStream(file);
             Scanner scanner = new Scanner(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
             scanner.useLocale(LOCALE);
@@ -103,19 +103,19 @@ public class NamedaysGenerator {
             stringBuilder.append("(").append("\"").append(name).append("\"").append(",").append("\"").append(date).append("\"").append(")").append(",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length()-1);
-        File file = new File("C:\\SpringsProject\\NameDayWebApp\\nameday\\data\\MySQL_queryINSERTNameday.txt");
+        File file = new File("src\\test\\resources\\testing_txt_files\\MySQL_queryINSERTNameday.txt");
         Files.write(Path.of(file.getPath()), stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
         return stringBuilder.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-        NamedaysGenerator namedaysGenerator = new NamedaysGenerator();
-        List<Nameday> namedays = namedaysGenerator.getNamedaysFromTxtFile();
-        System.out.println(namedays.toString());
-        String query = namedaysGenerator.generateQueries(namedays);
-        System.out.println(query);
-
-    }
+//    public static void main(String[] args) throws IOException {
+//        NamedaysGenerator namedaysGenerator = new NamedaysGenerator();
+//        List<Nameday> namedays = namedaysGenerator.getNamedaysFromTxtFile();
+//        System.out.println(namedays.toString());
+//        String query = namedaysGenerator.generateQueries(namedays);
+//        System.out.println(query);
+//
+//    }
 
 
 }

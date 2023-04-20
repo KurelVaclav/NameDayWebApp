@@ -2,13 +2,10 @@ package fg.forrest.namedayapp.nameday.service.serviceimpl;
 
 import fg.forrest.namedayapp.nameday.model.Nameday;
 import fg.forrest.namedayapp.nameday.repository.NamedayRepository;
-import fg.forrest.namedayapp.nameday.service.NamedayService;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,10 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.BDDAssumptions.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
